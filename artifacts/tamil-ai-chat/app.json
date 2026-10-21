@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "My Dream Women",
+    "name": "My Dream Women V4.0",
     "slug": "tamil-ai-chat",
-    "version": "1.3.0",
+    "version": "4.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "my-girls",
@@ -31,7 +31,7 @@
         "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.smk1.tamilaichat",
+      "package": "com.smk1.tamilaichat.v4",
       "versionCode": 23,
       "softwareKeyboardLayoutMode": "adjustResize",
       "permissions": [
