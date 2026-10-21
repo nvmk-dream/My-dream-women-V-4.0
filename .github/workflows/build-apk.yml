@@ -227,20 +227,33 @@ jobs:
           if [ -z "$APK" ] || [ "$SIZE" -lt 1000000 ]; then
             echo "APK invalid ($SIZE bytes)"; tail -80 /tmp/gradle.log; exit 1
           fi
-          APK_NAME="my-dream-women-v${{ github.run_number }}.apk"
+          APK_NAME="my-dream-women-v4.0-build-${{ github.run_number }}.apk"
           cp "$APK" "$APK_NAME"
           echo "APK_NAME=$APK_NAME" >> $GITHUB_ENV
+
+      - name: Verify V4 Android package id
+        run: |
+          AAPT=$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)
+          if [ -z "$AAPT" ]; then echo "aapt not found"; exit 1; fi
+          ACTUAL=$("$AAPT" dump badging "$APK_NAME" | sed -n "s/^package: name='\([^']*\)'.*/\1/p")
+          EXPECTED="com.smk1.tamilaichat.v4"
+          echo "APK package id: $ACTUAL"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "Expected $EXPECTED but found $ACTUAL"
+            exit 1
+          fi
+          echo "V4 package id verified; V3 installs remain separate"
 
       - name: Publish APK via GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="v${{ github.run_number }}"
+          TAG="v4.0.${{ github.run_number }}"
           gh release delete "$TAG" --yes --cleanup-tag \
             --repo ${{ github.repository }} 2>/dev/null || true
           sleep 2
           gh release create "$TAG" "$APK_NAME" \
-            --title "My Dream Women — Build ${{ github.run_number }}" \
+            --title "My Dream Women V4.0 — Build ${{ github.run_number }}" \
             --notes "$(git log -1 --pretty='format:%B' HEAD)" \
             --latest \
             --repo ${{ github.repository }}
